@@ -1,0 +1,17 @@
+# Logic from my 'challenge_4_timezone_alignment.ipynb'
+from datetime import time, timedelta
+import pandas as pd
+
+MARKET_CLOSE = time(15, 30)
+
+def map_to_trading_day(timestamp):
+    # If news is on a Weekend (Sat/Sun), it impacts Monday
+    if timestamp.weekday() >= 5:
+        days_ahead = 7 - timestamp.weekday()
+        return (timestamp + timedelta(days=days_ahead)).date()
+    
+    # If news is after 3:30 PM, it impacts the NEXT trading day
+    if timestamp.time() > MARKET_CLOSE:
+        return (timestamp + pd.tseries.offsets.BusinessDay(1)).date()
+        
+    return timestamp.date()
